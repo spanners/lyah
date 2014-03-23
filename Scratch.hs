@@ -14,3 +14,9 @@ howManyGreaterThanFifteen = length
                               . filter (\x -> (length x) > 15) 
                               . map collatz
                               . enumFromTo 1
+
+sum' :: (Num a) => [a] -> a
+sum' = foldl (\acc x -> acc + x) 0
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr (\x acc -> f x : acc) []
