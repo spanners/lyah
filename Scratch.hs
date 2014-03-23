@@ -20,3 +20,8 @@ sum' = foldl (\acc x -> acc + x) 0
 
 map' :: (a -> b) -> [a] -> [b]
 map' f = foldr (\x acc -> f x : acc) []
+
+reverse' :: [a] -> [a]
+reverse' = foldl (flip (:)) []
+
+checkThisOut = map ($ 3) [(4+), (10*), (^2), sqrt]  
