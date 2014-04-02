@@ -25,3 +25,9 @@ reverse' :: [a] -> [a]
 reverse' = foldl (flip (:)) []
 
 checkThisOut = map ($ 3) [(4+), (10*), (^2), sqrt]  
+
+-- N.B. If a pattern match fails in a lambda, a runtime error occurs, so be careful! 
+-- GHCi> (\(Just x) -> x) Nothing
+-- *** Exception: <interactive>:3:2-15: Non-exhaustive patterns in lambda
+-- GHCi> head []
+-- *** Exception: Prelude.head: empty list
