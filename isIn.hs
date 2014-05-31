@@ -1,3 +1,5 @@
+-- This is just isInfixOf
+
 import Data.List (isPrefixOf, tails)
 
 isIn :: (Eq a) => [a] -> [a] -> Bool
