@@ -1,10 +1,20 @@
+import qualified Data.Foldable as F
+import Data.Monoid
+import Data.List
+
+data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
+
 -- The Functor typeclass is for things that can be mapped over.
 -- Here we make Tree an instance of Functor, and tell Haskell how we want it to be mapped over.
 instance Functor Tree where
 	fmap f EmptyTree = EmptyTree
 	fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
 
-data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
+instance F.Foldable Tree where  
+    foldMap _ EmptyTree = mempty  
+    foldMap f (Node x l r) = F.foldMap f l `mappend`  
+                             	f x        `mappend`  
+                             	F.foldMap f r 
 
 singleton :: a -> Tree a
 singleton x = Node x EmptyTree EmptyTree
@@ -26,3 +36,10 @@ treeElem x (Node a left right)
 nums = [8,6,4,1,7,3,5]
 
 numsTree = foldr treeInsert EmptyTree nums
+
+sumNums = F.foldl (+) 0 numsTree
+productNums = F.foldl (*) 1 numsTree
+anyLittleNums = getAny $ F.foldMap (\x -> Any $ x < 2) numsTree
+anyBigNums = getAny $ F.foldMap (\x -> Any $ x > 15) numsTree
+listTree = F.foldMap (\x -> [x]) numsTree
+theSame = listTree == sort nums
