@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 import qualified Data.Foldable as F
 import Data.Monoid
 import Data.List
@@ -7,6 +8,7 @@ data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
 -- The Functor typeclass is for things that can be mapped over.
 -- Here we make Tree an instance of Functor, and tell Haskell how we want it to be mapped over.
 instance Functor Tree where
+	fmap :: (a -> b) -> Tree a -> Tree b
 	fmap f EmptyTree = EmptyTree
 	fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
 
