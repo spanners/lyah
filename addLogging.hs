@@ -1,4 +1,8 @@
+import Criterion.Main
 import Control.Monad.Writer
+-- this is useful for making append-heavy functiong, such as those with logging
+import Data.DList
+
 
 -- your everyday GCD function
 gcd' :: Int -> Int -> Int  
@@ -18,11 +22,6 @@ gcd'' a b
 
 gcd''Logs = mapM_ putStrLn $ snd $ runWriter (gcd'' 8 3)
 
-
--- this is useful for making append-heavy functiong, such as those with logging
-import Data.DList
-
-
 -- Here, we prepend to a DList instead of appending to a normal haskell list, for great efficiency!
 gcd''' :: Int -> Int -> Writer (DList String) Int  
 gcd''' a b  
@@ -38,3 +37,13 @@ gcd''' a b
 
 -- we convert back to a normal list for pretty printing
 gcd'''Logs = mapM_ putStrLn $ toList . snd . runWriter $ gcd''' 8 3
+
+-- it turns out there's neglible difference between each function.
+-- On my machine I get 
+-- list: 21.4 ns
+-- dlist: 21.3 ns
+main = defaultMain [
+  bgroup "gcd" [ bench "list"  $ whnf runWriter $ gcd'' 132 73
+               , bench "dlist" $ whnf runWriter $ gcd''' 132 73
+               ]
+ ]
