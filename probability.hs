@@ -46,23 +46,8 @@ flipThree = do
     c <- loadedCoin
     return (all (==Tails) [a,b,c])
 
-{-
-All three of them will land tails nine times out of forty, which is
-less than 25%. We see that our monad doesn't know how to join all of
-the False outcomes where all coins don't land tails into one
-outcome. That's not a big problem, since writing a function to put
-all the same outcomes into one outcome is pretty easy and is left as
-an exercise to the reader (you!)
--}
-
--- TODO: implement instance Monoid Prob,
-
-instance Eq a => Monoid (Prob a) where
-   mempty = Prob [] 
-   mappend (Prob xs) (Prob ys) = Prob $ mergeOutcomes $ xs ++ ys
-
-mergeOutcomes :: (Eq a, Num b) => [(a, b)] -> [(a, b)]
-mergeOutcomes outcomes =
+merge :: (Eq a, Num b) => [(a, b)] -> [(a, b)]
+merge outcomes =
     let groups = groupBy (\(x1, _) (x2, _) -> x1 == x2) outcomes
         mergeFunction = foldr1 (\(x1, y1) (_, y2) -> (x1, y1 + y2))
     in map mergeFunction groups
