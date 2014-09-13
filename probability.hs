@@ -1,10 +1,11 @@
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE RankNTypes #-}
 
 import Data.Ratio ((%))
 import Data.List (all, groupBy)
 import Data.Monoid (Monoid, mempty, mappend)
 
-newtype Prob a = Prob { getProb :: [(a, Rational)] } deriving (Show, Eq)
+newtype Prob a = Prob { getProb :: [(a, Rational)] } deriving Show
 
 instance Functor Prob where
     fmap :: (a -> b) -> Prob a -> Prob b
@@ -25,10 +26,10 @@ flatten (Prob xs) = Prob $ concat $ map multAll xs
 
 instance Monad Prob where
     return :: a -> (Prob a)
-    (>>=) :: Prob a -> (a -> Prob b) -> Prob b
-    fail :: String -> Prob a
     return x = Prob [(x,1%1)]
+    (>>=) :: Prob a -> (a -> Prob b) -> Prob b
     m >>= f = flatten (fmap f m)
+    fail :: String -> Prob a
     fail _ = Prob []
  
 data Coin = Heads | Tails deriving (Show, Eq)
