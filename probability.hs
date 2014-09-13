@@ -1,9 +1,10 @@
 {-# LANGUAGE InstanceSigs #-}
 
-import Data.Ratio
-import Data.List (all)
+import Data.Ratio ((%))
+import Data.List (all, groupBy)
+import Data.Monoid (Monoid, mempty, mappend)
 
-newtype Prob a = Prob { getProb :: [(a, Rational)] } deriving Show
+newtype Prob a = Prob { getProb :: [(a, Rational)] } deriving (Show, Eq)
 
 instance Functor Prob where
     fmap :: (a -> b) -> Prob a -> Prob b
@@ -23,10 +24,13 @@ flatten (Prob xs) = Prob $ concat $ map multAll xs
     where multAll (Prob innerxs, p) = map (\(x,r) -> (x,p*r)) innerxs
 
 instance Monad Prob where
+    return :: a -> (Prob a)
+    (>>=) :: Prob a -> (a -> Prob b) -> Prob b
+    fail :: String -> Prob a
     return x = Prob [(x,1%1)]
     m >>= f = flatten (fmap f m)
     fail _ = Prob []
-
+ 
 data Coin = Heads | Tails deriving (Show, Eq)
 
 coin :: Prob Coin
@@ -53,3 +57,12 @@ an exercise to the reader (you!)
 
 -- TODO: implement instance Monoid Prob,
 
+instance Eq a => Monoid (Prob a) where
+   mempty = Prob [] 
+   mappend (Prob xs) (Prob ys) = Prob $ mergeOutcomes $ xs ++ ys
+
+mergeOutcomes :: (Eq a, Num b) => [(a, b)] -> [(a, b)]
+mergeOutcomes outcomes =
+    let groups = groupBy (\(x1, _) (x2, _) -> x1 == x2) outcomes
+        mergeFunction = foldr1 (\(x1, y1) (_, y2) -> (x1, y1 + y2))
+    in map mergeFunction groups
