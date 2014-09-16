@@ -39,7 +39,7 @@ main = do
   nick h "HaskellBot"
   user h "HaskellBot"
   
-  joinChan h "#stopdrinking"
+  joinChan h "##HaskellBot"
 
   forever (action h)
 
