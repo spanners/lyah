@@ -1,11 +1,9 @@
-localMaxima :: [Integer] -> [Integer]
-localMaxima = map piggy . maximas . spin3
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
-spin3 :: [a] -> [(a, a, a)]
-spin3 xs = zip3 xs (tail xs) (tail $ tail xs)
+import Data.List (tails)
 
-maximas :: Ord a => [(a, a, a)] -> [(a, a, a)]
-maximas xs = filter (\(x, y, z) -> x < y && y > z) xs
+pattern Three x y z ← x:y:z:_
 
-piggy :: (a, b, c) -> b
-piggy (x,y,z) = y 
+localMaxima :: [Integer] → [Integer]
+localMaxima xs = [ mid | Three left mid right ← tails xs, left < mid, mid > right ]
